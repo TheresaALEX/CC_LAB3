@@ -1,5 +1,5 @@
 from products import dao
-
+from typing import List, Dict
 
 class Product:
     def __init__(self, id: int, name: str, description: str, cost: float, qty: int = 0):
@@ -9,31 +9,27 @@ class Product:
         self.cost = cost
         self.qty = qty
 
-    def load(data):
+    @staticmethod
+    def load(data: Dict) -> 'Product':
         return Product(data['id'], data['name'], data['description'], data['cost'], data['qty'])
 
 
-def list_products() -> list[Product]:
+def list_products() -> List[Product]:
     products = dao.list_products()
-    result = []
-    for product in products:
-        result.append(Product.load(product))
-    
-    return result
-
+    return [Product.load(product) for product in products]
 
 
 def get_product(product_id: int) -> Product:
-    return Product.load(dao.get_product(product_id))
+    product_data = dao.get_product(product_id)
+    return Product.load(product_data)
 
 
-def add_product(product: dict):
+def add_product(product: Dict):
     dao.add_product(product)
 
 
 def update_qty(product_id: int, qty: int):
     if qty < 0:
         raise ValueError('Quantity cannot be negative')
+   
     dao.update_qty(product_id, qty)
-
-
